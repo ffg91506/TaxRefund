@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Five Fold Group - S-Corp Tax Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #2d3748;
+            color: white;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .brand-title {
+            font-size: 3rem;
+            font-family: Georgia, 'Times New Roman', serif;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 0.75rem;
+            letter-spacing: 0.05em;
+        }
+        
+        .brand-tagline {
+            color: #cbd5e0;
+            font-size: 0.875rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+        }
+        
+        .calculator-title {
+            font-size: 1.875rem;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+        
+        .calculator-subtitle {
+            color: #a0aec0;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .card {
+            background: #4a5568;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+            padding: 1.5rem;
+            border: 1px solid #718096;
+        }
+        
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #cbd5e0;
+            margin-bottom: 0.5rem;
+        }
+        
+        input[type="number"] {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: #718096;
+            border: 1px solid #a0aec0;
+            color: white;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #cbd5e0;
+        }
+        
+        .divider {
+            padding-top: 1rem;
+            border-top: 1px solid #718096;
+            margin-bottom: 1.5rem;
+        }
+        
+        .net-profit {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+        
+        .tax-breakdown {
+            padding: 1rem;
+            background: #718096;
+            border-radius: 8px;
+        }
+        
+        .tax-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .tax-total {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.125rem;
+            font-weight: bold;
+            padding-top: 0.5rem;
+            border-top: 1px solid #a0aec0;
+        }
+        
+        .required-changes {
+            background: #718096;
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+        
+        .changes-header {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        
+        .changes-icon {
+            width: 3rem;
+            height: 3rem;
+            margin: 0 auto 0.5rem;
+        }
+        
+        .change-card {
+            background: #a0aec0;
+            border-radius: 8px;
+            padding: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .change-label {
+            font-size: 0.875rem;
+            color: #2d3748;
+            margin-bottom: 0.25rem;
+        }
+        
+        .change-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #1a202c;
+        }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        
+        .summary-item {
+            background: #718096;
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        
+        .summary-label {
+            font-size: 0.875rem;
+            color: #cbd5e0;
+            margin-bottom: 0.25rem;
+        }
+        
+        .summary-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .note {
+            margin-top: 1rem;
+            font-size: 0.875rem;
+            color: #a0aec0;
+            text-align: center;
+        }
+        
+        .text-positive {
+            color: #68d391;
+        }
+        
+        .text-negative {
+            color: #fc8181;
+        }
+        
+        .text-orange {
+            color: #ed8936;
+        }
+        
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .brand-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="brand-title">Five Fold Group</h1>
+            <p class="brand-tagline">Your Success Is Our Priority</p>
+            <h2 class="calculator-title">S-Corp Tax Calculator</h2>
+            <p class="calculator-subtitle">California S-Corp + Federal Income Tax Planning Tool</p>
+        </div>
+        
+        <div class="grid">
+            <!-- Current Business Numbers -->
+            <div class="card">
+                <h2 class="card-title">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="1" x2="12" y2="23"></line>
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                    </svg>
+                    Current Business Numbers
+                </h2>
+                
+                <div class="form-group">
+                    <label>Total Income</label>
+                    <input type="number" id="income" value="200000" onfocus="this.select()">
+                </div>
+                
+                <div class="form-group">
+                    <label>Current Expenses</label>
+                    <input type="number" id="expenses" value="50000" onfocus="this.select()">
+                </div>
+                
+                <div class="divider">
+                    <div class="net-profit">
+                        <span style="color: #cbd5e0;">Net Profit:</span>
+                        <span id="netProfit">$150,000</span>
+                    </div>
+                </div>
+                
+                <div class="tax-breakdown">
+                    <div class="tax-row">
+                        <span style="color: #cbd5e0;">CA S-Corp Tax (1.5%):</span>
+                        <span id="caScorpTax">$2,250</span>
+                    </div>
+                    <div class="tax-row">
+                        <span style="color: #cbd5e0;">Federal Income Tax:</span>
+                        <span id="federalTax">$32,000</span>
+                    </div>
+                    <div class="tax-total">
+                        <span style="color: #e2e8f0;">Total Tax:</span>
+                        <span class="text-negative" id="totalTax">$34,250</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Target Tax Goal -->
+            <div class="card">
+                <h2 class="card-title">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <circle cx="12" cy="12" r="6"></circle>
+                        <circle cx="12" cy="12" r="2"></circle>
+                    </svg>
+                    Target Tax Goal
+                </h2>
+                
+                <div class="form-group">
+                    <label>Desired Total Tax Payment</label>
+                    <input type="number" id="targetTax" value="10000" onfocus="this.select()">
+                </div>
+                
+                <div class="required-changes">
+                    <div class="changes-header">
+                        <svg class="changes-icon" viewBox="0 0 24 24" fill="none" stroke="#cbd5e0" stroke-width="2">
+                            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                            <polyline points="17 6 23 6 23 12"></polyline>
+                        </svg>
+                        <h3 style="font-size: 1.125rem; font-weight: 600; color: white;">Required Changes</h3>
+                    </div>
+                    
+                    <div class="change-card">
+                        <div class="change-label">Total Expenses Needed</div>
+                        <div class="change-value" id="requiredExpenses">$150,000</div>
+                    </div>
+                    
+                    <div class="change-card">
+                        <div class="change-label">Additional Spending Required</div>
+                        <div class="change-value" id="additionalExpenses">+$100,000</div>
+                    </div>
+                    
+                    <div class="change-card">
+                        <div class="change-label">Resulting Net Profit</div>
+                        <div class="change-value" id="requiredNetProfit">$50,000</div>
+                    </div>
+                </div>
+                
+                <div class="tax-breakdown" style="margin-top: 1rem;">
+                    <div class="tax-row">
+                        <span style="color: #cbd5e0;">Projected CA S-Corp Tax:</span>
+                        <span id="projectedCaTax">$750</span>
+                    </div>
+                    <div class="tax-row">
+                        <span style="color: #cbd5e0;">Projected Federal Tax:</span>
+                        <span id="projectedFedTax">$9,250</span>
+                    </div>
+                    <div class="tax-total">
+                        <span style="color: #e2e8f0;">Projected Total Tax:</span>
+                        <span class="text-positive" id="projectedTax">$10,000</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Summary -->
+        <div class="card">
+            <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem;">Summary</h3>
+            <div class="summary-grid">
+                <div class="summary-item">
+                    <div class="summary-label">Current Tax</div>
+                    <div class="summary-value" id="summaryCurrentTax">$34,250</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Target Tax</div>
+                    <div class="summary-value" id="summaryTargetTax">$10,000</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Tax Savings</div>
+                    <div class="summary-value text-positive" id="summarySavings">$24,250</div>
+                </div>
+            </div>
+            <p class="note">
+                Note: Federal tax calculations use 2025 single filer brackets. Consult a tax professional for personalized advice.
+            </p>
+        </div>
+    </div>
+    
+    <script>
+        const CA_SCORP_RATE = 0.015;
+        
+        const federalBrackets = [
+            { limit: 11600, rate: 0.10 },
+            { limit: 47150, rate: 0.12 },
+            { limit: 100525, rate: 0.22 },
+            { limit: 191950, rate: 0.24 },
+            { limit: 243725, rate: 0.32 },
+            { limit: 609350, rate: 0.35 },
+            { limit: Infinity, rate: 0.37 }
+        ];
+        
+        function calculateFederalTax(taxableIncome) {
+            let tax = 0;
+            let previousLimit = 0;
+            
+            for (let bracket of federalBrackets) {
+                if (taxableIncome <= previousLimit) break;
+                const taxableInBracket = Math.min(taxableIncome, bracket.limit) - previousLimit;
+                tax += taxableInBracket * bracket.rate;
+                previousLimit = bracket.limit;
+                if (taxableIncome <= bracket.limit) break;
+            }
+            
+            return tax;
+        }
+        
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(value);
+        }
+        
+        function calculateRequiredExpenses(income, targetTax) {
+            let low = 0;
+            let high = income;
+            let bestExpense = 0;
+            
+            for (let i = 0; i < 100; i++) {
+                const testExpense = (low + high) / 2;
+                const testNetProfit = income - testExpense;
+                const testCaTax = testNetProfit * CA_SCORP_RATE;
+                const testFedTax = calculateFederalTax(testNetProfit);
+                const testTotalTax = testCaTax + testFedTax;
+                
+                if (Math.abs(testTotalTax - targetTax) < 10) {
+                    bestExpense = testExpense;
+                    break;
+                }
+                
+                if (testTotalTax > targetTax) {
+                    low = testExpense;
+                } else {
+                    high = testExpense;
+                }
+                
+                bestExpense = testExpense;
+            }
+            
+            return bestExpense;
+        }
+        
+        function updateCalculations() {
+            const income = parseFloat(document.getElementById('income').value) || 0;
+            const expenses = parseFloat(document.getElementById('expenses').value) || 0;
+            const targetTax = parseFloat(document.getElementById('targetTax').value) || 0;
+            
+            // Current calculations
+            const netProfit = income - expenses;
+            const caScorpTax = netProfit * CA_SCORP_RATE;
+            const federalTax = calculateFederalTax(netProfit);
+            const totalTax = caScorpTax + federalTax;
+            
+            // Required expenses calculations
+            const requiredExpenses = calculateRequiredExpenses(income, targetTax);
+            const additionalExpensesNeeded = requiredExpenses - expenses;
+            const requiredNetProfit = income - requiredExpenses;
+            const requiredCaTax = requiredNetProfit * CA_SCORP_RATE;
+            const requiredFedTax = calculateFederalTax(requiredNetProfit);
+            const projectedTax = requiredCaTax + requiredFedTax;
+            
+            // Update DOM
+            document.getElementById('netProfit').textContent = formatCurrency(netProfit);
+            document.getElementById('caScorpTax').textContent = formatCurrency(caScorpTax);
+            document.getElementById('federalTax').textContent = formatCurrency(federalTax);
+            document.getElementById('totalTax').textContent = formatCurrency(totalTax);
+            
+            document.getElementById('requiredExpenses').textContent = formatCurrency(requiredExpenses);
+            
+            const additionalEl = document.getElementById('additionalExpenses');
+            additionalEl.textContent = (additionalExpensesNeeded > 0 ? '+' : '') + formatCurrency(additionalExpensesNeeded);
+            additionalEl.style.color = additionalExpensesNeeded > 0 ? '#ed8936' : '#48bb78';
+            
+            document.getElementById('requiredNetProfit').textContent = formatCurrency(requiredNetProfit);
+            document.getElementById('projectedCaTax').textContent = formatCurrency(requiredCaTax);
+            document.getElementById('projectedFedTax').textContent = formatCurrency(requiredFedTax);
+            document.getElementById('projectedTax').textContent = formatCurrency(projectedTax);
+            
+            // Summary
+            document.getElementById('summaryCurrentTax').textContent = formatCurrency(totalTax);
+            document.getElementById('summaryTargetTax').textContent = formatCurrency(targetTax);
+            document.getElementById('summarySavings').textContent = formatCurrency(Math.max(0, totalTax - targetTax));
+        }
+        
+        // Add event listeners
+        document.getElementById('income').addEventListener('input', updateCalculations);
+        document.getElementById('expenses').addEventListener('input', updateCalculations);
+        document.getElementById('targetTax').addEventListener('input', updateCalculations);
+        
+        // Initial calculation
+        updateCalculations();
+    </script>
+</body>
+</html>
